@@ -1,0 +1,9 @@
+# same as config in `build.properties` but with high priority
+# setting ndk-build for android
+ANDROID_NDK /opt/env/android-ndk-r12b
+
+# setting compiler for arm linux
+# cmake_c_compiler /opt/arm-linux/bin/arm-linux-gnueabihf-gcc
+# cmake_cxx_compiler  /opt/arm-linux/bin/arm-linux-gnueabihf-gcc
+#cmake_c_compiler gcc
+#cmake_cxx_compiler g++
