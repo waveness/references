@@ -1,0 +1,3 @@
+#define FOO_ENABLE
+#define DEMO_VERSION_MAJOR 1
+#define DEMO_VERSION_MINOR 0
