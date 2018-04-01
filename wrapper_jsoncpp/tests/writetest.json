@@ -1,0 +1,45 @@
+{
+	"another" : 
+	{
+		"redirect" : "test_redirect.json"
+	},
+	"another_notwork" : 
+	{
+		"redirect" : "test_notwork.json"
+	},
+	"new_vint" : 879,
+	"people" : 
+	{
+		"age" : 30,
+		"name" : "caizhengbo",
+		"redirect" : ""
+	},
+	"test_array" : 
+	[
+		{
+			"vint" : 10,
+			"vstring" : "test array string"
+		},
+		{
+			"vint" : 10,
+			"vstring" : "zhengbo1.cai"
+		}
+	],
+	"test_array2" : 
+	[
+		null,
+		null,
+		null,
+		null,
+		{
+			"vint" : 109,
+			"vstring" : "test sub config write string"
+		}
+	],
+	"vbool" : true,
+	"vdouble" : 1.035548926440242,
+	"vfloat" : 1458.48974609375,
+	"vint" : 5567,
+	"vint64" : 1234567890123456790,
+	"vstring" : "this is new string"
+}

@@ -1,0 +1,30 @@
+{
+	"vint" : 5566,
+	"people" : {
+		"redirect":"",
+		"name" : "caizhengbo",
+		"age" : 30
+	},
+	"vfloat" : 1457.4897,
+	"another": {
+		"redirect" : "test_redirect.json"
+	},
+	"another_notwork": {
+		"redirect" : "test_notwork.json"
+	},
+	"vdouble" : 0.03554892644024208,
+	"vint64" : 1234567890123456789,
+	"vbool" : 1,
+	"vstring" : "this is string",
+	"test_array":
+	[
+		{
+			"vint": 10,
+			"vstring": "test array string"
+		},
+		{
+			"vint": 11,
+			"vstring": "test array string 2"
+		}
+	]
+}

@@ -1,0 +1,25 @@
+{
+	"animal" : 
+	{
+		"feature" : "miaomiao",
+		"name" : "cat",
+		"vint" : 888
+	},
+	"people" : 
+	{
+		"age" : 13,
+		"name" : "zhengbo.cai",
+		"redirect" : "",
+		"sex" : true,
+		"stdstr" : "test sub config write string",
+		"vdouble" : 0.03554892644024208,
+		"vfloat" : 1457.48974609375,
+		"vint" : 5566,
+		"vlong" : 12345677890123
+	},
+	"people2" : 
+	{
+		"redirect" : "test_redirect2.json"
+	},
+	"testInt" : 256
+}

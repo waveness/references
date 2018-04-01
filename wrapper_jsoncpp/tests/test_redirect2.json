@@ -1,0 +1,13 @@
+{
+	"people2" : 
+	{
+		"age" : 12,
+		"name" : "zhengbo1.cai"
+	},
+	"people3" : 
+	{
+		"age" : 100,
+		"name" : "test sub config write string"
+	},
+	"vfloat" : 0.010578000000000001
+}
