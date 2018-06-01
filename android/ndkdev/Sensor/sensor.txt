@@ -1,0 +1,181 @@
+http://stackoverflow.com/questions/8989686/access-faster-polling-accelerometer-via-nativeactivity-ndk
+
+############################not work properly############################################
+#include <jni.h>
+#include <string.h>
+
+#include <android/sensor.h>
+#include <android/log.h>
+#include <android/looper.h>
+
+#define TAG "accelerondk"
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, TAG, __VA_ARGS__)
+#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
+
+#define LOOPER_ID 1
+#define SAMP_PER_SEC 100 //i've changed to 120, even 10, but nothing happen
+
+void Java_azka_web_ndk_AcceleroNDKActivity_startMonitoring(JNIEnv* env, jclass clazz) {
+    ASensorManager* sensorManager = ASensorManager_getInstance();
+
+    ALooper* looper = ALooper_forThread();
+    if(looper == NULL)
+        looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+
+    ASensorRef accelerometerSensor = ASensorManager_getDefaultSensor(sensorManager,ASENSOR_TYPE_ACCELEROMETER);
+    LOGI("accelerometerSensor: %s, vendor: %s", ASensor_getName(accelerometerSensor), ASensor_getVendor(accelerometerSensor));
+
+    ASensorEventQueue* queue = ASensorManager_createEventQueue(sensorManager, looper, LOOPER_ID, NULL, NULL);
+
+    ASensorEventQueue_enableSensor(queue, accelerometerSensor);
+    ASensorEventQueue_setEventRate(queue, accelerometerSensor, (1000L/SAMP_PER_SEC)*1000); 
+
+    int ident;//identifier 
+    int events;
+    while (1) {
+        while ((ident=ALooper_pollAll(-1, NULL, &events, NULL) >= 0)) {
+            // If a sensor has data, process it now.
+            if (ident == LOOPER_ID) {
+                ASensorEvent event;
+                while (ASensorEventQueue_getEvents(queue, &event, 1) > 0) {
+                    LOGI("aaaaaaa accelerometer X = %f y = %f z=%f ", event.acceleration.x, event.acceleration.y, event.acceleration.z);
+                }
+            }
+        }
+    }
+
+}
+
+############################work well############################################
+#include <string.h>
+#include <jni.h>
+#include <android/sensor.h>
+#include <android/looper.h>
+#include <android/log.h>
+#include <time.h>
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "TestJNIActivity", __VA_ARGS__))
+#define LOOPER_ID 1
+#define SAMP_PER_SEC 100
+
+ASensorEventQueue* sensorEventQueue;
+
+int accCounter = 0;
+int64_t lastAccTime = 0;
+
+int gyroCounter = 0;
+int64_t lastGyroTime = 0;
+
+int magCounter = 0;
+int64_t lastMagTime = 0;
+
+/* This is a trivial JNI example where we use a native method
+ * to return a new VM String. See the corresponding Java source
+ * file located at:
+ *
+ *   apps/samples/hello-jni/project/src/com/example/HelloJni/HelloJni.java
+ */
+
+static int get_sensor_events(int fd, int events, void* data);
+
+struct tm* start;
+struct tm* finish;
+
+
+jstring
+Java_de_tum_ndktest_TestJNIActivity_stringFromJNI( JNIEnv* env, jobject thiz )
+{
+    LOGI("stringFromJNI");
+    return (*env)->NewStringUTF(env,"Hello from JNI !");
+}
+
+void
+Java_de_tum_ndktest_TestJNIActivity_sensorValue( JNIEnv* env, jobject thiz ) {
+
+    ASensorEvent event;
+    int events, ident;
+    ASensorManager* sensorManager;
+    const ASensor* accSensor;
+    const ASensor* gyroSensor;
+    const ASensor* magSensor;
+    void* sensor_data = malloc(1000);
+
+    LOGI("sensorValue() - ALooper_forThread()");
+
+    ALooper* looper = ALooper_forThread();
+
+    if(looper == NULL)
+    {
+        looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+    }
+
+    sensorManager = ASensorManager_getInstance();
+
+    accSensor = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_ACCELEROMETER);
+    gyroSensor = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_GYROSCOPE);
+    magSensor = ASensorManager_getDefaultSensor(sensorManager, ASENSOR_TYPE_MAGNETIC_FIELD);
+
+
+
+    sensorEventQueue = ASensorManager_createEventQueue(sensorManager, looper, 3, get_sensor_events, sensor_data);
+
+    ASensorEventQueue_enableSensor(sensorEventQueue, accSensor);
+    ASensorEventQueue_enableSensor(sensorEventQueue, gyroSensor);
+    ASensorEventQueue_enableSensor(sensorEventQueue, magSensor);
+
+    //Sampling rate: 100Hz
+    int a = ASensor_getMinDelay(accSensor);
+    int b = ASensor_getMinDelay(gyroSensor);
+    int c = ASensor_getMinDelay(magSensor);
+    LOGI("min-delay: %d, %d, %d",a,b,c);
+    ASensorEventQueue_setEventRate(sensorEventQueue, accSensor, 100000);
+    ASensorEventQueue_setEventRate(sensorEventQueue, gyroSensor, 100000);
+    ASensorEventQueue_setEventRate(sensorEventQueue, magSensor, 100000);
+
+    LOGI("sensorValue() - START");
+}
+
+
+
+static int get_sensor_events(int fd, int events, void* data) {
+  ASensorEvent event;
+  //ASensorEventQueue* sensorEventQueue;
+  while (ASensorEventQueue_getEvents(sensorEventQueue, &event, 1) > 0) {
+        if(event.type == ASENSOR_TYPE_ACCELEROMETER) {
+                //LOGI("accl(x,y,z,t): %f %f %f %lld", event.acceleration.x, event.acceleration.y, event.acceleration.z, event.timestamp);
+                if(accCounter == 0 || accCounter == 1000)
+                    {
+                     LOGI("Acc-Time: %lld (%f)", event.timestamp,((double)(event.timestamp-lastAccTime))/1000000000.0);
+                     lastAccTime = event.timestamp;
+                     accCounter = 0;
+                    }
+
+                accCounter++;
+        }
+        else if(event.type == ASENSOR_TYPE_GYROSCOPE) {
+                //LOGI("accl(x,y,z,t): %f %f %f %lld", event.acceleration.x, event.acceleration.y, event.acceleration.z, event.timestamp);
+                if(gyroCounter == 0 || gyroCounter == 1000)
+                    {
+
+                     LOGI("Gyro-Time: %lld (%f)", event.timestamp,((double)(event.timestamp-lastGyroTime))/1000000000.0);
+                     lastGyroTime = event.timestamp;
+                     gyroCounter = 0;
+                    }
+
+                gyroCounter++;
+        }
+        else if(event.type == ASENSOR_TYPE_MAGNETIC_FIELD) {
+                //LOGI("accl(x,y,z,t): %f %f %f %lld", event.acceleration.x, event.acceleration.y, event.acceleration.z, event.timestamp);
+                if(magCounter == 0 || magCounter == 1000)
+                    {
+                     LOGI("Mag-Time: %lld (%f)", event.timestamp,((double)(event.timestamp-lastMagTime))/1000000000.0);
+                     lastMagTime = event.timestamp;
+                     magCounter = 0;
+                    }
+
+                magCounter++;
+        }
+
+  }
+  //should return 1 to continue receiving callbacks, or 0 to unregister
+  return 1;
+}

@@ -1,0 +1,11 @@
+build
+build_doc
+output
+3rd-party
+.idea
+*.iml
+.sln
+*.swp
+*.local
+.DS_Store
+.gradle
