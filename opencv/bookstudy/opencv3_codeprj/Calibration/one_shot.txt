@@ -1,11 +1,11 @@
-nframes = 2
-board_width = 4
-board_height = 4
+nframes = 1
+board_width = 5
+board_height = 3
 x_scale = 2.0
 y_scale = 2.0
 squareSize = 8.0
 aspect_ratio = 1.0
-image_name = one_shot_y.jpeg
+image_name = E:/Works/Exercise/references/opencv/bookstudy/opencv3_codeprj/Calibration/ADAS_20181019-151112_675_0.png
 fx = 1299.65
 fy = 1299.09
 cx = 633.014

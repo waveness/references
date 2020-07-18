@@ -50,6 +50,8 @@ int CalibRPY(const char *config_filename,double &pitch, double &yaw, double &rol
         printf("loading image failed...");
         return -1;
     }
+    cv::imshow("origin", view);
+    cv::waitKey(0);
 
     view.copyTo(re_view);
     std::vector<std::vector<cv::Point2f>>image_points;
@@ -65,13 +67,14 @@ int CalibRPY(const char *config_filename,double &pitch, double &yaw, double &rol
         pointbuf.clear();
         cv::resize(viewGray, view_large, cv::Size(view.cols*x_scale, view.rows * y_scale));//XXXX//
         //pointbuf.clear();
-
+        cv::imshow("test", view_large);
+        cv::waitKey(0);
         switch (pattern)
         {
         case CHESSBOARD:
 
             found = cv::findChessboardCorners(/*viewGray*/view_large, boardSize, pointbuf
-                , CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE /*| CV_CALIB_CB_FILTER_QUADS*//*| CV_CALIB_CB_FAST_CHECK*/);
+                , CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE | CV_CALIB_CB_FILTER_QUADS | CV_CALIB_CB_FAST_CHECK);
 
             if (!found) {
                 printf("cannot find chessboard corners !\n");
@@ -101,6 +104,8 @@ int CalibRPY(const char *config_filename,double &pitch, double &yaw, double &rol
 
         if (found) {
            cv::drawChessboardCorners(view, boardSize, cv::Mat(pointbuf), found);
+           cv::imshow("corner", view);
+           cv::waitKey(0);
         }
 
         if (found)
@@ -378,5 +383,5 @@ int CalibRPY(const char *config_filename, double &pitch, double &yaw, double &ro
 #endif
 int main() {
   double pitch, yaw, roll;
-  CalibRPY("one_shot.txt", pitch, yaw, roll);
+  CalibRPY("E:/Works/Exercise/references/opencv/bookstudy/opencv3_codeprj/Calibration/one_shot.txt", pitch, yaw, roll);
 }

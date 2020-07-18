@@ -41,12 +41,13 @@ int main(int argc, char* argv[])
     return 0;
   }
 
-  char* filename = argv[1];
+  char* filename = argv[2];
     
   FILE* fp = fopen(filename, "rb");
   if (!fp) {
     return 0;
   }
+#if 0
 #if 0
   char *buf = new char[720 * 1280 * 3/2];
   fread(buf, 1, 720 * 1280 * 3 / 2, fp);
@@ -58,13 +59,25 @@ int main(int argc, char* argv[])
   cv::resize(rgbImg, resizeImg, cv::Size(640, 320));
   cv::imshow("720p_scale_0.5", resizeImg);
 #else
-  char *buf = new char[720 * 1280];
-  fread(buf, 1, 720 * 1280, fp);
+  int size = 1280 * 720 * 3;
+  char *buf = new char[size];
+  fread(buf, 1, size, fp);
   fclose(fp);
-  cv::Mat yuvImg(720, 1280, CV_8UC1, buf, 1280);
+  cv::Mat yuvImg(720, 1280, CV_8UC3, buf);
   cv::Mat rgbImg;
-  cv::cvtColor(yuvImg, rgbImg, cv::COLOR_GRAY2RGB);
-  cv::imshow("720p_scale_0.5", rgbImg);
+  //cv::cvtColor(yuvImg, rgbImg, CV_YUV2BGR_I420);
+  //cv::cvtColor(yuvImg, rgbImg, CV_RGBA2BGRA);
+  cv::imshow("720p_scale_0.5", yuvImg);
+#endif
+#else
+  char *buf = new char[540 * 960 * 4];
+  fread(buf, 1, 540 * 960 * 4, fp);
+  fclose(fp);
+  cv::Mat test_mat(540, 960, CV_8UC4, buf);
+  cv::Mat temp2;
+
+  //cv::cvtColor(test_mat, temp2, CV_YUV2BGRA_NV12);
+  cv::imshow("test", test_mat);
 #endif
 
 #endif
