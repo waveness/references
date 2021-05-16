@@ -8,7 +8,8 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/output")
 message(STATUS "===>CMAKE_INSTALL_PREFIX=" ${CMAKE_INSTALL_PREFIX})
 
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
-
+set(CMAKE_DEBUG_POSTFIX _d)
+set(DEBUG_POSTFIX d)
 include_directories(
 	inc
 	D:/ProgramFiles/Opencv/opencv3.10/build/include
@@ -34,6 +35,7 @@ endmacro(source_group_by_dir)
 
 function(wrap_target_link_libraries target)
   foreach (lib ${ARGN})
+    message("ARGN  is ${lib}${DEBUG_POSTFIX}, target is ${target}")
     target_link_libraries(${target} debug "${lib}${DEBUG_POSTFIX}" optimized ${lib})
   endforeach ()
 endfunction()
@@ -49,6 +51,7 @@ add_subdirectory(Chapter5/25_ImageBlending)
 add_subdirectory(Chapter5/24_14WaysToAccessPixel)
 add_subdirectory(Chapter5/26_MultiChannelImageBlending)
 add_subdirectory(Chapter5/27_ChangeContrastAndBright)
+add_subdirectory(Chapter5/28_DFT)
 add_subdirectory(Chapter6/31_boxFilter)
 add_subdirectory(Chapter6/49_floodFill)
 add_subdirectory(MyTest/BGR2YUV)
@@ -56,6 +59,6 @@ add_subdirectory(Calibration)
 add_subdirectory(MyTest/Disparity)
 add_subdirectory(MyTest/Mp4Recorder)
 add_subdirectory(MyTest/YUVReader)
-add_subdirectory(MyTest/LearnMatDefine)
+add_subdirectory(MyTest/ResizeYUV420)
 add_subdirectory(MyTest/PackJpegExport)
 add_executable(main_entry ${SOURCE_FILES})
